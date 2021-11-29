@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -9,14 +12,19 @@ public class SpawnManager : MonoBehaviour
     private float spawnTime = 3;
     private float obstacleInterval = 1;
     private PlayerController playerControllerScript;
-
+    public Button startButton;
+    public TextMeshProUGUI startGameText;
+    public GameObject titleScreen;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        InvokeRepeating("spawnObstacle", spawnTime, obstacleInterval);
+        //InvokeRepeating("spawnObstacle", spawnTime, obstacleInterval);
         playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
+        startButton = GetComponent<Button>();
+        startButton.onClick.AddListener(startGame);
+        startButton.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -46,4 +54,11 @@ public class SpawnManager : MonoBehaviour
             }
         }
     }
-}
+    public void startGame()
+    {
+        startGameText.gameObject.SetActive(false);
+        InvokeRepeating("spawnObstacle", spawnTime, obstacleInterval);
+        titleScreen.gameObject.SetActive(false);
+       }
+    }
+

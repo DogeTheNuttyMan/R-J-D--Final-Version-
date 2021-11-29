@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,6 +12,9 @@ public class PlayerController : MonoBehaviour
     public bool onRoad;
     public bool gameOver = false;
     private PlayerController playerControllerScript;
+    public TextMeshProUGUI gameOverText;
+    public Button restartButton;
+    public Button startButton;
 
     // Start is called before the first frame update
     void Start()
@@ -61,6 +68,8 @@ public class PlayerController : MonoBehaviour
             gameOver = true;
             GetComponent<Rigidbody>().isKinematic = true;
             Debug.Log("Game Over!");
+            gameOverText.gameObject.SetActive(true);
+            restartButton.gameObject.SetActive(true);
         }
     }
 
@@ -70,5 +79,13 @@ public class PlayerController : MonoBehaviour
         {
             onRoad = false;
         }
+    }
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    public void StartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
