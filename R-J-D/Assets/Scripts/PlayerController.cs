@@ -9,6 +9,8 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
+    private BoxCollider playerCol;
+
     public bool onRoad;
     public bool gameOver = false;
     private PlayerController playerControllerScript;
@@ -16,34 +18,46 @@ public class PlayerController : MonoBehaviour
     public Button restartButton;
     public Button startButton;
     float timeNow = 0f;
-    float startTime = 10f;
-    
+    float startTime = 70f;
+
 
     public TextMeshProUGUI countdownText;
     public TextMeshProUGUI winText;
+
+    public bool hasPowerup = false;
+    public GameObject powerupIndicator;
+    public GameObject powerupPrefab;
+
+    private float spawnPosX = -3;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
+        playerCol = GetComponent<BoxCollider>();
+
         onRoad = true;
 
         timeNow = startTime;
+
+        Vector3 spawnPos = new Vector3(Random.Range(-spawnPosX, spawnPosX), 1, 8);
+        Instantiate(powerupPrefab, spawnPos, powerupPrefab.transform.rotation);
     }
+
 
     // Update is called once per frame
     void Update()
     {
-        
-            timeNow -= 1 * Time.deltaTime;
-            countdownText.text = timeNow.ToString("0");
 
-            if (timeNow <= 0)
-            {
-                timeNow = 0;
-            }
-        
+        timeNow -= 1 * Time.deltaTime;
+        countdownText.text = timeNow.ToString("0");
+
+        if (timeNow <= 0)
+        {
+            timeNow = 0;
+        }
 
         //Left
         if (onRoad && Input.GetKeyDown(KeyCode.LeftArrow))
@@ -51,7 +65,7 @@ public class PlayerController : MonoBehaviour
             playerRb.AddForce(Vector3.left * 3, ForceMode.Impulse);
         }
 
-        if(transform.position.x < -3)
+        if (transform.position.x < -3)
         {
             transform.position = new Vector3(-3, transform.position.y, transform.position.z);
         }
@@ -65,7 +79,7 @@ public class PlayerController : MonoBehaviour
 
         if (transform.position.x > 3)
         {
-            transform.position = new Vector3(3 , transform.position.y, transform.position.z);
+            transform.position = new Vector3(3, transform.position.y, transform.position.z);
         }
 
         //Z
@@ -73,11 +87,49 @@ public class PlayerController : MonoBehaviour
         {
             transform.position = new Vector3(transform.position.x, transform.position.y, -7);
         }
+
         if (timeNow == 0 && gameOver != true)
         {
             gameOver = true;
             winGameCode();
         }
+
+        powerupIndicator.transform.position = transform.position + new Vector3(0, 1, 0);
+
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Powerup"))
+        {
+            hasPowerup = true;
+            powerupIndicator.gameObject.SetActive(true);
+            Destroy(other.gameObject);
+            GetComponent<BoxCollider>().isTrigger = true;
+            StartCoroutine(PowerUpCountdownRoutine());
+            StartCoroutine(PowerUpMiniGame());
+        }
+    }
+
+    IEnumerator PowerUpCountdownRoutine()
+    {
+        yield return new WaitForSeconds(7);
+        hasPowerup = false;
+        powerupIndicator.gameObject.SetActive(false);
+        GetComponent<BoxCollider>().isTrigger = false;
+
+    }
+
+    IEnumerator PowerUpMiniGame()
+    {
+        yield return new WaitForSeconds(10);
+
+        hasPowerup = false;
+        powerupIndicator.gameObject.SetActive(false);
+        GetComponent<BoxCollider>().isTrigger = false;
+
+        Vector3 spawnPos = new Vector3(Random.Range(-spawnPosX, spawnPosX), 1, 8);
+        Instantiate(powerupPrefab, spawnPos, powerupPrefab.transform.rotation);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -91,6 +143,17 @@ public class PlayerController : MonoBehaviour
         {
             resetGameCode();
         }
+
+        /*
+        else if (collision.gameObject.CompareTag("Powerup"))
+        {
+            GetComponent<Rigidbody>().isKinematic = true;
+            onRoad = true;
+            hasPowerup = true;
+            Destroy(collision.gameObject);
+            GetComponent<Rigidbody>().isKinematic = false;
+        }
+        */
     }
 
     void OnCollisionExit(Collision collison)
@@ -117,7 +180,7 @@ public class PlayerController : MonoBehaviour
         countdownText.text = timeNow.ToString("0");
     }
     public void winGameCode()
-    {  
+    {
         gameOver = true;
         GetComponent<Rigidbody>().isKinematic = true;
         winText.gameObject.SetActive(true);
