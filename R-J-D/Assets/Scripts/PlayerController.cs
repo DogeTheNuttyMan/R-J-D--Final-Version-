@@ -15,17 +15,36 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI gameOverText;
     public Button restartButton;
     public Button startButton;
+    float timeNow = 0f;
+    float startTime = 10f;
+    
+
+    public TextMeshProUGUI countdownText;
+    public TextMeshProUGUI winText;
+
 
     // Start is called before the first frame update
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
         onRoad = true;
+
+        timeNow = startTime;
     }
 
     // Update is called once per frame
     void Update()
     {
+        
+            timeNow -= 1 * Time.deltaTime;
+            countdownText.text = timeNow.ToString("0");
+
+            if (timeNow <= 0)
+            {
+                timeNow = 0;
+            }
+        
+
         //Left
         if (onRoad && Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -54,6 +73,11 @@ public class PlayerController : MonoBehaviour
         {
             transform.position = new Vector3(transform.position.x, transform.position.y, -7);
         }
+        if (timeNow == 0 && gameOver != true)
+        {
+            gameOver = true;
+            winGameCode();
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -65,11 +89,7 @@ public class PlayerController : MonoBehaviour
 
         else if (collision.gameObject.CompareTag("Obstacle"))
         {
-            gameOver = true;
-            GetComponent<Rigidbody>().isKinematic = true;
-            Debug.Log("Game Over!");
-            gameOverText.gameObject.SetActive(true);
-            restartButton.gameObject.SetActive(true);
+            resetGameCode();
         }
     }
 
@@ -87,5 +107,20 @@ public class PlayerController : MonoBehaviour
     public void StartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    public void resetGameCode()
+    {
+        gameOver = true;
+        GetComponent<Rigidbody>().isKinematic = true;
+        gameOverText.gameObject.SetActive(true);
+        restartButton.gameObject.SetActive(true);
+        countdownText.text = timeNow.ToString("0");
+    }
+    public void winGameCode()
+    {  
+        gameOver = true;
+        GetComponent<Rigidbody>().isKinematic = true;
+        winText.gameObject.SetActive(true);
+        restartButton.gameObject.SetActive(true);
     }
 }

@@ -59,6 +59,5 @@ public class SpawnManager : MonoBehaviour
         startGameText.gameObject.SetActive(false);
         InvokeRepeating("spawnObstacle", spawnTime, obstacleInterval);
         titleScreen.gameObject.SetActive(false);
-       }
     }
-
+}
