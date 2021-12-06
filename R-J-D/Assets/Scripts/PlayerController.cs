@@ -20,7 +20,6 @@ public class PlayerController : MonoBehaviour
     float timeNow = 0f;
     float startTime = 70f;
 
-
     public TextMeshProUGUI countdownText;
     public TextMeshProUGUI winText;
 
@@ -30,6 +29,7 @@ public class PlayerController : MonoBehaviour
 
     private float spawnPosX = -3;
 
+    public ParticleSystem explosionParticle;
 
 
     // Start is called before the first frame update
@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour
     {
         playerRb = GetComponent<Rigidbody>();
         playerCol = GetComponent<BoxCollider>();
-
+        
         onRoad = true;
 
         timeNow = startTime;
@@ -95,7 +95,6 @@ public class PlayerController : MonoBehaviour
         }
 
         powerupIndicator.transform.position = transform.position + new Vector3(0, 1, 0);
-
     }
 
     public void OnTriggerEnter(Collider other)
@@ -140,8 +139,10 @@ public class PlayerController : MonoBehaviour
         }
 
         else if (collision.gameObject.CompareTag("Obstacle"))
-        {
+        {         
+            explosionParticle.Play();
             resetGameCode();
+
         }
 
         /*
