@@ -13,6 +13,7 @@ public class SpawnManager : MonoBehaviour
     private float obstacleInterval = 1;
     private PlayerController playerControllerScript;
     public Button startButton;
+    public Button developerButton;
     public TextMeshProUGUI startGameText;
     public GameObject titleScreen;
 
@@ -24,6 +25,10 @@ public class SpawnManager : MonoBehaviour
         startButton = GetComponent<Button>();
         startButton.onClick.AddListener(startGame);
         startButton.gameObject.SetActive(false);
+
+        developerButton = GetComponent<Button>();
+        developerButton.onClick.AddListener(OpenChannel);
+        developerButton.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -58,5 +63,10 @@ public class SpawnManager : MonoBehaviour
         startGameText.gameObject.SetActive(false);
         InvokeRepeating("spawnObstacle", spawnTime, obstacleInterval);
         titleScreen.gameObject.SetActive(false);
+    }
+
+    public void OpenChannel()
+    {
+        Application.OpenURL("https://github.com/DogeTheNuttyMan/R-J-D--Final-Version-");
     }
 }

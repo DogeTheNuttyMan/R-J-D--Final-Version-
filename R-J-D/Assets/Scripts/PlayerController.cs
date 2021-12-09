@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     public Button restartButton;
     public Button startButton;
     float timeNow = 0f;
-    float startTime = 20f;
+    float startTime = 70f;
 
     public TextMeshProUGUI countdownText;
     public TextMeshProUGUI winText;
