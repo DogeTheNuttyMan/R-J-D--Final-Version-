@@ -16,8 +16,7 @@ public class SpawnManager : MonoBehaviour
     public TextMeshProUGUI startGameText;
     public GameObject titleScreen;
 
-
-    // Start is called before the first frame update
+    // Start is called before the first framdde update
     void Start()
     {
         //InvokeRepeating("spawnObstacle", spawnTime, obstacleInterval);

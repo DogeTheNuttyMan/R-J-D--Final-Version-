@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     public Button restartButton;
     public Button startButton;
     float timeNow = 0f;
-    float startTime = 70f;
+    float startTime = 20f;
 
     public TextMeshProUGUI countdownText;
     public TextMeshProUGUI winText;
@@ -30,6 +30,11 @@ public class PlayerController : MonoBehaviour
     private float spawnPosX = -3;
 
     public ParticleSystem explosionParticle;
+    public ParticleSystem dirtParticle;
+
+    public AudioClip collisionSoundEffect;
+    public AudioClip winningSoundEffect;
+    private AudioSource playerAudio;
 
 
     // Start is called before the first frame update
@@ -44,6 +49,8 @@ public class PlayerController : MonoBehaviour
 
         Vector3 spawnPos = new Vector3(Random.Range(-spawnPosX, spawnPosX), 1, 8);
         Instantiate(powerupPrefab, spawnPos, powerupPrefab.transform.rotation);
+
+        playerAudio = GetComponent<AudioSource>();
     }
 
 
@@ -93,7 +100,6 @@ public class PlayerController : MonoBehaviour
             gameOver = true;
             winGameCode();
         }
-
         powerupIndicator.transform.position = transform.position + new Vector3(0, 1, 0);
     }
 
@@ -122,7 +128,6 @@ public class PlayerController : MonoBehaviour
     IEnumerator PowerUpMiniGame()
     {
         yield return new WaitForSeconds(10);
-
         hasPowerup = false;
         powerupIndicator.gameObject.SetActive(false);
         GetComponent<BoxCollider>().isTrigger = false;
@@ -136,10 +141,13 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Road"))
         {
             onRoad = true;
+            dirtParticle.Play();
         }
 
         else if (collision.gameObject.CompareTag("Obstacle"))
-        {         
+        {
+            playerAudio.PlayOneShot(collisionSoundEffect, 0.7f);
+            dirtParticle.Stop();
             explosionParticle.Play();
             resetGameCode();
 
@@ -183,6 +191,7 @@ public class PlayerController : MonoBehaviour
     public void winGameCode()
     {
         gameOver = true;
+        playerAudio.PlayOneShot(winningSoundEffect, 0.8f);
         GetComponent<Rigidbody>().isKinematic = true;
         winText.gameObject.SetActive(true);
         restartButton.gameObject.SetActive(true);
